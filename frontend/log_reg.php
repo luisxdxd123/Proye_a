@@ -56,12 +56,19 @@
               />
             </div>
           </div>
-          <select name="genero" style="margin:8px 0;" required>
+          <select name="genero" id="generoSelect" style="margin:8px 0;" required>
             <option value="" disabled selected>Género</option>
             <option value="masculino">Masculino</option>
             <option value="femenino">Femenino</option>
             <option value="otro">Otro</option>
           </select>
+          <input
+            type="text"
+            name="genero_personalizado"
+            id="generoPersonalizado"
+            placeholder="Especifica tu género"
+            style="display: none;"
+          />
           <input
             type="text"
             name="contacto"
@@ -123,5 +130,18 @@
     </div>
 
     <script src="../js/app.js"></script>
+    <script>
+      document.getElementById('generoSelect').addEventListener('change', function() {
+        const generoPersonalizado = document.getElementById('generoPersonalizado');
+        if (this.value === 'otro') {
+          generoPersonalizado.style.display = 'block';
+          generoPersonalizado.required = true;
+        } else {
+          generoPersonalizado.style.display = 'none';
+          generoPersonalizado.required = false;
+          generoPersonalizado.value = '';
+        }
+      });
+    </script>
   </body>
 </html>
