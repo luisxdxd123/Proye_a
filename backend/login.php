@@ -41,6 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 case 'departamentos':
                     header('Location: ../frontend/departamentos/dash_dep.php');
                     break;
+                case 'presidencia':
+                    header('Location: ../frontend/presidencia/dash_pre.php');
+                    break;
                 default:
                     header('Location: ../frontend/log_reg.php?error=rol');
             }
