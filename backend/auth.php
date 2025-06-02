@@ -2,7 +2,7 @@
 session_start();
 
 function checkAuth() {
-    if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol_user'])) {
+    if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol'])) {
         header('Location: ../../frontend/log_reg.php');
         exit();
     }
@@ -10,9 +10,9 @@ function checkAuth() {
 
 function checkRole($required_role) {
     checkAuth();
-    if ($_SESSION['rol_user'] !== $required_role) {
+    if ($_SESSION['rol'] !== $required_role) {
         // Redirigir según el rol actual
-        switch($_SESSION['rol_user']) {
+        switch($_SESSION['rol']) {
             case 'ciudadano':
                 header('Location: ../../frontend/ciudadano/dash_ciud.php');
                 break;
