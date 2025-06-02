@@ -81,7 +81,7 @@
             placeholder="Contraseña"
             required
           />
-          <button type="submit">Sign Up</button>
+          <button type="submit">Registrarse</button>
         </form>
       </div>
       <div class="form-container sign-in">
@@ -115,7 +115,7 @@
           <div class="toggle-panel toggle-left">
             <h1>Bienvenido de vuelta!</h1>
             <p>Ya tienes cuenta¿? Inicia Sesion!</p>
-            <button class="hidden" id="login">Sign In</button>
+            <button class="hidden" id="login">Iniciar Sesión</button>
           </div>
           <div class="toggle-panel toggle-right">
             <h1>Hola Ciudadano!</h1>
@@ -123,7 +123,7 @@
               No tienes una cuenta? Crea una ahora para acceder a todas las
               funcionalidades del sitio.
             </p>
-            <button class="hidden" id="register">Sign Up</button>
+            <button class="hidden" id="register">Registrarse</button>
           </div>
         </div>
       </div>

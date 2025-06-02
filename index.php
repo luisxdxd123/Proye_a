@@ -12,7 +12,7 @@
     <!----===== Boxicons CSS ===== -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     
-    <!--<title>Dashboard Sidebar Menu</title>--> 
+    <title>Dashboard Sidebar Menu</title>
 </head>
 <body>
     <nav class="sidebar close">
@@ -53,17 +53,11 @@
                             <span class="text nav-text">Opcion 3</span>
                         </a>
                     </li>
-                        <li class="nav-link dropdown">
-                        <a href="#" class="dropdown-toggle">
+                        <li class="nav-link">
+                        <a href="frontend/log_reg.php">
                             <i class='bx bx-bulb icon'></i>
-                            <span class="text nav-text">Usuarios</span>
-                            <i class='bx bx-chevron-right dropdown-arrow'></i>
+                            <span class="text nav-text">SOLICITUDES</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="frontend/log_reg.php">CIUDADANO</a></li>
-                            <li><a href="#">PRESIDENCIA</a></li>
-                            <li><a href="#">DEPARTAMENTOS</a></li>
-                        </ul>
                     </li>
                 </ul>
             </div>
