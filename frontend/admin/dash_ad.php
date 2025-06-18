@@ -313,6 +313,60 @@
       </div>
           </div>
         `
+      },
+      contrasenas: {
+        title: "Gestión de Contraseñas",
+        subtitle: "Cambiar contraseñas de usuarios del sistema",
+        content: `
+          <div class="space-y-6">
+            <!-- Header -->
+            <div class="flex justify-between items-center">
+              <div>
+                <h2 class="text-2xl font-bold text-[#6B1024]">Gestión de Contraseñas</h2>
+                <p class="text-gray-600">Cambiar contraseñas de cualquier usuario del sistema</p>
+              </div>
+              <button onclick="mostrarCambioContrasenaAdmin()" class="px-4 py-2 bg-[#6B1024] text-white rounded-lg hover:bg-[#8B223A] transition-colors">
+                Mi Contraseña
+              </button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+              <div class="flex gap-4">
+                <select id="filtro-rol" onchange="filtrarUsuarios()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B1024] focus:border-transparent">
+                  <option value="todos">Todos los roles</option>
+                  <option value="ciudadano">Ciudadanos</option>
+                  <option value="departamentos">Departamentos</option>
+                  <option value="presidencia">Presidencia</option>
+                  <option value="admin">Administradores</option>
+                </select>
+                <input type="text" id="buscar-usuario" placeholder="Buscar usuario..." onkeyup="filtrarUsuarios()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B1024] focus:border-transparent">
+              </div>
+            </div>
+
+            <!-- Tabla de usuarios -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <table class="w-full">
+                <thead class="bg-[#6B1024] text-white">
+                  <tr>
+                    <th class="px-6 py-3 text-left">Nombre Completo</th>
+                    <th class="px-6 py-3 text-left">Contacto</th>
+                    <th class="px-6 py-3 text-left">Rol</th>
+                    <th class="px-6 py-3 text-left">Fecha Registro</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-usuarios" class="divide-y divide-gray-200">
+                  <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                      Cargando usuarios...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `
       }
     };
 
@@ -403,6 +457,264 @@
         showSection('administradores');
       });
     });
+
+    // Variables globales para gestión de contraseñas
+    let todosLosUsuarios = [];
+
+    // Función para mostrar la gestión de contraseñas
+    function mostrarGestionContrasenas() {
+      showSection('contrasenas');
+      cargarUsuarios();
+    }
+
+    // Cargar usuarios desde el backend
+    async function cargarUsuarios() {
+      try {
+        const response = await fetch('../../backend/admin/obtener_usuarios.php');
+        const data = await response.json();
+        
+        if (data.success) {
+          todosLosUsuarios = data.usuarios;
+          mostrarUsuarios(todosLosUsuarios);
+        } else {
+          console.error('Error al cargar usuarios:', data.error);
+        }
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+      }
+    }
+
+    // Mostrar usuarios en la tabla
+    function mostrarUsuarios(usuarios) {
+      const tbody = document.getElementById('tabla-usuarios');
+      
+      if (usuarios.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+              No se encontraron usuarios
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = usuarios.map(usuario => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">${usuario.nombre} ${usuario.apellido}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            ${usuario.contacto}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRolColor(usuario.rol_user)}">
+              ${getRolText(usuario.rol_user)}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            ${new Date(usuario.fecha_registro).toLocaleDateString()}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+            <button onclick="cambiarContrasenaUsuario(${usuario.id}, '${usuario.nombre}', '${usuario.apellido}')" 
+                    class="px-3 py-1 bg-[#6B1024] text-white rounded hover:bg-[#8B223A] transition-colors">
+              Cambiar Contraseña
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Filtrar usuarios
+    function filtrarUsuarios() {
+      const filtroRol = document.getElementById('filtro-rol').value;
+      const busqueda = document.getElementById('buscar-usuario').value.toLowerCase();
+      
+      let usuariosFiltrados = todosLosUsuarios;
+      
+      // Filtrar por rol
+      if (filtroRol !== 'todos') {
+        usuariosFiltrados = usuariosFiltrados.filter(usuario => usuario.rol_user === filtroRol);
+      }
+      
+      // Filtrar por búsqueda
+      if (busqueda) {
+        usuariosFiltrados = usuariosFiltrados.filter(usuario => 
+          usuario.nombre.toLowerCase().includes(busqueda) ||
+          usuario.apellido.toLowerCase().includes(busqueda) ||
+          usuario.contacto.toLowerCase().includes(busqueda)
+        );
+      }
+      
+      mostrarUsuarios(usuariosFiltrados);
+    }
+
+    // Funciones auxiliares
+    function getRolColor(rol) {
+      const colores = {
+        'ciudadano': 'bg-blue-100 text-blue-800',
+        'departamentos': 'bg-green-100 text-green-800',
+        'presidencia': 'bg-purple-100 text-purple-800',
+        'admin': 'bg-red-100 text-red-800'
+      };
+      return colores[rol] || 'bg-gray-100 text-gray-800';
+    }
+
+    function getRolText(rol) {
+      const textos = {
+        'ciudadano': 'Ciudadano',
+        'departamentos': 'Departamento',
+        'presidencia': 'Presidencia',
+        'admin': 'Administrador'
+      };
+      return textos[rol] || rol;
+    }
+
+    // Función para cambiar contraseña de usuario
+    function cambiarContrasenaUsuario(usuarioId, nombre, apellido) {
+      const modalContent = `
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+            <h3 class="text-lg font-bold text-[#6B1024] mb-4">Cambiar Contraseña</h3>
+            <p class="text-gray-600 mb-4">Cambiar contraseña para: <strong>${nombre} ${apellido}</strong></p>
+            
+            <form id="form-admin-contrasena">
+              <input type="hidden" name="usuario_id" value="${usuarioId}">
+              
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña:</label>
+                <input type="password" name="contrasena_nueva" required minlength="6" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+              </div>
+              
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña:</label>
+                <input type="password" name="confirmar_contrasena" required minlength="6" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+              </div>
+              
+              <div class="flex justify-end space-x-2">
+                <button type="button" onclick="cerrarModalAdminContrasena()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                  Cancelar
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A]">
+                  Cambiar Contraseña
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalContent);
+      
+      // Event listener para el formulario
+      document.getElementById('form-admin-contrasena').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        
+        try {
+          const response = await fetch('../../backend/admin/cambiar_contrasena_usuario.php', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            alert('✅ ' + data.message);
+            cerrarModalAdminContrasena();
+          } else {
+            alert('❌ Error: ' + data.error);
+          }
+        } catch (error) {
+          console.error('Error al cambiar contraseña:', error);
+          alert('❌ Error al cambiar la contraseña. Inténtelo de nuevo.');
+        }
+      });
+    }
+
+    function cerrarModalAdminContrasena() {
+      const modal = document.querySelector('.fixed.inset-0.bg-gray-600');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    // Función para que el admin cambie su propia contraseña
+    function mostrarCambioContrasenaAdmin() {
+      const modalContent = `
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+            <h3 class="text-lg font-bold text-[#6B1024] mb-4">Cambiar Mi Contraseña</h3>
+            
+            <form id="form-admin-mi-contrasena">
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña Actual:</label>
+                <input type="password" name="contrasena_actual" required 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+              </div>
+              
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña:</label>
+                <input type="password" name="contrasena_nueva" required minlength="6" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+              </div>
+              
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña:</label>
+                <input type="password" name="confirmar_contrasena" required minlength="6" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+              </div>
+              
+              <div class="flex justify-end space-x-2">
+                <button type="button" onclick="cerrarModalAdminContrasena()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                  Cancelar
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A]">
+                  Cambiar Contraseña
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalContent);
+      
+      // Event listener para el formulario del admin
+      document.getElementById('form-admin-mi-contrasena').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        
+        try {
+          const response = await fetch('../../backend/cambiar_contrasena.php', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            alert('✅ ' + data.message);
+            cerrarModalAdminContrasena();
+          } else {
+            alert('❌ Error: ' + data.error);
+          }
+        } catch (error) {
+          console.error('Error al cambiar contraseña:', error);
+          alert('❌ Error al cambiar la contraseña. Inténtelo de nuevo.');
+        }
+      });
+    }
   </script>
 </body>
 </html>

@@ -7,12 +7,13 @@ require_once(__DIR__ . '/../../backend/config/db_config.php');
 
 try {
     $userId = $_SESSION['user_id'];
-    // Consulta para obtener todos los datos necesarios
+    // Consulta para obtener todos los datos necesarios con información de envío
     $stmt = $conn->prepare("SELECT 
         s.id as id_solicitud,
         s.descripcion,
         s.estado,
         s.fecha_creacion as fecha_solicitud,
+        s.fecha_actualizacion,
         s.ine,
         s.curp,
         s.comprobante_domicilio,
@@ -20,9 +21,16 @@ try {
         u.nombre,
         u.apellido,
         u.contacto as contacto_1,
-        s.contacto_secundario as contacto_2
+        s.contacto_secundario as contacto_2,
+        se.estado as estado_envio,
+        se.respuesta_departamento,
+        se.fecha_respuesta,
+        ud.nombre as departamento_nombre,
+        ud.apellido as departamento_apellido
     FROM solicitudes s
     INNER JOIN usuarios u ON s.usuario_id = u.id
+    LEFT JOIN solicitudes_enviadas se ON s.id = se.solicitud_id
+    LEFT JOIN usuarios ud ON se.departamento_id = ud.id
     WHERE s.usuario_id = ?
     ORDER BY s.fecha_creacion DESC");
     $stmt->execute([$userId]);
@@ -126,26 +134,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_documentos
                                                 <p class="text-sm text-gray-500"><?php echo date('d/m/Y', strtotime($solicitud['fecha_solicitud'])); ?></p>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 text-sm rounded-full <?php 
-                                            switch($solicitud['estado']) {
-                                                case 'pendiente':
-                                                    echo 'bg-yellow-100 text-yellow-800';
-                                                    break;
-                                                case 'en_proceso':
-                                                    echo 'bg-blue-100 text-blue-800';
-                                                    break;
-                                                case 'completada':
-                                                    echo 'bg-green-100 text-green-800';
-                                                    break;
-                                                case 'rechazada':
-                                                    echo 'bg-red-100 text-red-800';
-                                                    break;
-                                                default:
-                                                    echo 'bg-gray-100 text-gray-800';
-                                            }
-                                            ?>">
-                                            <?php echo htmlspecialchars(ucfirst($solicitud['estado'])); ?>
-                                        </span>
+                                        <div class="text-right">
+                                            <span class="px-3 py-1 text-sm rounded-full <?php 
+                                                switch($solicitud['estado']) {
+                                                    case 'pendiente':
+                                                        echo 'bg-yellow-100 text-yellow-800';
+                                                        break;
+                                                    case 'en_proceso':
+                                                        echo 'bg-blue-100 text-blue-800';
+                                                        break;
+                                                    case 'completada':
+                                                        echo 'bg-green-100 text-green-800';
+                                                        break;
+                                                    case 'rechazada':
+                                                        echo 'bg-red-100 text-red-800';
+                                                        break;
+                                                    default:
+                                                        echo 'bg-gray-100 text-gray-800';
+                                                }
+                                                ?>">
+                                                <?php echo htmlspecialchars(ucfirst($solicitud['estado'])); ?>
+                                            </span>
+                                            <?php if (!empty($solicitud['departamento_nombre'])): ?>
+                                                <div class="text-xs text-gray-500 mt-1">
+                                                    Enviada a: <?php echo htmlspecialchars($solicitud['departamento_nombre'] . ' ' . $solicitud['departamento_apellido']); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if (!empty($solicitud['estado_envio'])): ?>
+                                                <div class="text-xs mt-1">
+                                                    <span class="px-2 py-1 rounded <?php
+                                                        switch($solicitud['estado_envio']) {
+                                                            case 'pendiente':
+                                                                echo 'bg-yellow-200 text-yellow-800';
+                                                                break;
+                                                            case 'en_revision':
+                                                                echo 'bg-blue-200 text-blue-800';
+                                                                break;
+                                                            case 'autorizada':
+                                                                echo 'bg-green-200 text-green-800';
+                                                                break;
+                                                            case 'rechazada':
+                                                                echo 'bg-red-200 text-red-800';
+                                                                break;
+                                                        }
+                                                    ?>">
+                                                        <?php echo htmlspecialchars(ucfirst($solicitud['estado_envio'])); ?>
+                                                    </span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -284,6 +321,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_documentos
                     </table>
                 </div>
 
+                <!-- Información adicional si fue enviada a departamento -->
+                ${solicitud.departamento_nombre ? `
+                    <div class="mt-6 border rounded-lg p-4 bg-gray-50">
+                        <h3 class="text-lg font-bold mb-3">INFORMACIÓN DEL PROCESO</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Departamento asignado:</p>
+                                <p class="text-sm">${solicitud.departamento_nombre} ${solicitud.departamento_apellido || ''}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Estado del proceso:</p>
+                                <p class="text-sm">${solicitud.estado_envio ? getEstadoEnvioTexto(solicitud.estado_envio) : 'No enviada'}</p>
+                            </div>
+                        </div>
+                        ${solicitud.respuesta_departamento ? `
+                            <div class="mt-3">
+                                <p class="text-sm font-medium text-gray-600">Respuesta del departamento:</p>
+                                <p class="text-sm bg-white p-2 rounded border">${solicitud.respuesta_departamento}</p>
+                            </div>
+                        ` : ''}
+                        ${solicitud.fecha_respuesta ? `
+                            <div class="mt-2">
+                                <p class="text-xs text-gray-500">Fecha de respuesta: ${new Date(solicitud.fecha_respuesta).toLocaleString()}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+                
+                <!-- Información de actualización -->
+                <div class="mt-4 text-xs text-gray-500 text-center">
+                    Última actualización: ${new Date(solicitud.fecha_actualizacion || solicitud.fecha_solicitud).toLocaleString()}
+                </div>
+
                 <!-- Formulario para subir documentos -->
                 <form method="POST" enctype="multipart/form-data" class="mt-6 border rounded-lg p-4">
                     <h3 class="text-lg font-bold mb-4">Adjuntar Documentos</h3>
@@ -324,6 +394,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_documentos
         function abrirPDF(solicitudId) {
             // Función para el botón regresar - puedes implementar lo que necesites aquí
             location.reload();
+        }
+
+        function getEstadoEnvioTexto(estado) {
+            const estados = {
+                'pendiente': 'Pendiente de revisión',
+                'en_revision': 'En revisión',
+                'autorizada': '✅ Autorizada',
+                'rechazada': '❌ Rechazada'
+            };
+            return estados[estado] || estado;
         }
     </script>
 </body>

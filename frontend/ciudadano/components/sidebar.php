@@ -50,6 +50,14 @@ if ($current_page === 'regimiento_sol.php') {
                 <span>Mi Perfil</span>
             </div>
         </a>
+        <a href="#" onclick="mostrarCambioContrasena()" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>Cambiar Contraseña</span>
+            </div>
+        </a>
     </nav>
     <div class="absolute bottom-0 w-64 p-4">
         <a href="../../backend/logout.php" class="block w-full px-4 py-2 text-center bg-[#8B223A] hover:bg-[#9B324A] rounded-lg transition-colors duration-200">

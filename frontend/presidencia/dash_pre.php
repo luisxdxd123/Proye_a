@@ -10,6 +10,31 @@ checkRole('presidencia');
     <title>Panel Presidencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilos para botones de documentos */
+        .doc-button {
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            margin: 1px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+        .doc-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Mejorar visualización de tablas en mobile */
+        @media (max-width: 768px) {
+            .doc-button {
+                font-size: 0.6rem;
+                padding: 2px 4px;
+                margin: 0.5px;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex">
@@ -37,6 +62,7 @@ checkRole('presidencia');
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documentos</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                                     </tr>
                                 </thead>
@@ -70,6 +96,7 @@ checkRole('presidencia');
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Envío</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documentos</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Respuesta</th>
                                     </tr>
                                 </thead>
@@ -93,6 +120,7 @@ checkRole('presidencia');
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ciudadano</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Autorización</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documentos</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observaciones</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                                     </tr>
@@ -245,6 +273,21 @@ checkRole('presidencia');
         </div>
     </div>
 
+    <!-- Modal para ver PDF -->
+    <div id="modal-pdf" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-5 border w-11/12 h-5/6 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-[#6B1024]">Solicitud PDF</h3>
+                <button onclick="cerrarModalPDF()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <iframe id="pdf-iframe" src="" class="w-full h-full border-0 rounded"></iframe>
+        </div>
+    </div>
+
     <!-- Modal para enviar solicitud a departamento -->
     <div id="modal-enviar" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -264,6 +307,39 @@ checkRole('presidencia');
                 <div class="flex justify-end space-x-2">
                     <button type="button" onclick="cerrarModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancelar</button>
                     <button type="submit" class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A]">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para cambiar contraseña -->
+    <div id="modal-cambio-contrasena-presidencia" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-[#6B1024]">Cambiar Contraseña</h3>
+                <button onclick="cerrarModalContrasenaPresidencia()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="form-cambio-contrasena-presidencia">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña Actual:</label>
+                    <input type="password" name="contrasena_actual" required class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña:</label>
+                    <input type="password" name="contrasena_nueva" required minlength="6" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña:</label>
+                    <input type="password" name="confirmar_contrasena" required minlength="6" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="cerrarModalContrasenaPresidencia()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A]">Cambiar Contraseña</button>
                 </div>
             </form>
         </div>
@@ -338,7 +414,11 @@ checkRole('presidencia');
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="descargarPDF(${solicitud.id})" class="text-blue-600 hover:text-blue-900 mr-3">PDF</button>
+                                ${generarBotonesDocumentos(solicitud)}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="descargarPDF(${solicitud.id})" class="text-blue-600 hover:text-blue-900 mr-2" title="Ver PDF de la solicitud original">PDF</button>
+                                <button onclick="verPDFModal(${solicitud.id})" class="text-green-600 hover:text-green-900 mr-2" title="Ver PDF en ventana">Modal</button>
                                 <button onclick="abrirModalEnviar(${solicitud.id})" class="text-[#6B1024] hover:text-[#8B223A]">Enviar</button>
                             </td>
                         `;
@@ -394,12 +474,15 @@ checkRole('presidencia');
                         tr.innerHTML = `
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.solicitud_id}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.ciudadano_nombre} ${solicitud.ciudadano_apellido}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.departamento_nombre || 'Departamento'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.departamento_nombre} ${solicitud.departamento_apellido || ''}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${new Date(solicitud.fecha_envio).toLocaleDateString()}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoColor(solicitud.estado_envio)}">
                                     ${solicitud.estado_envio}
                                 </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                ${generarBotonesDocumentosEnviadas(solicitud)}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900">${solicitud.respuesta_departamento || '-'}</td>
                         `;
@@ -426,11 +509,15 @@ checkRole('presidencia');
                         tr.innerHTML = `
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.solicitud_id}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.ciudadano_nombre} ${solicitud.ciudadano_apellido}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.departamento_nombre || 'Departamento'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${solicitud.departamento_nombre} ${solicitud.departamento_apellido || ''}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${new Date(solicitud.fecha_respuesta).toLocaleDateString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                ${generarBotonesDocumentosAutorizadas(solicitud)}
+                            </td>
                             <td class="px-6 py-4 text-sm text-gray-900">${solicitud.respuesta_departamento || '-'}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="descargarPDF(${solicitud.solicitud_id})" class="text-blue-600 hover:text-blue-900">Ver PDF</button>
+                                <button onclick="descargarPDF(${solicitud.solicitud_id})" class="text-blue-600 hover:text-blue-900 mr-2" title="Ver PDF de la solicitud original">PDF</button>
+                                <button onclick="verPDFModal(${solicitud.solicitud_id})" class="text-green-600 hover:text-green-900" title="Ver PDF en ventana">Modal</button>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -532,7 +619,21 @@ checkRole('presidencia');
         }
 
         function descargarPDF(solicitudId) {
-            window.open(`../shared/generar_pdf_solicitud.php?id=${solicitudId}`, '_blank');
+            // Abrir el PDF de la solicitud original del ciudadano en la misma pestaña
+            const url = `../shared/generar_pdf_solicitud.php?id=${solicitudId}`;
+            window.location.href = url;
+        }
+
+        function verPDFModal(solicitudId) {
+            // Mostrar el PDF en un modal dentro de la misma página
+            const url = `../shared/generar_pdf_solicitud.php?id=${solicitudId}`;
+            document.getElementById('pdf-iframe').src = url;
+            document.getElementById('modal-pdf').classList.remove('hidden');
+        }
+
+        function cerrarModalPDF() {
+            document.getElementById('modal-pdf').classList.add('hidden');
+            document.getElementById('pdf-iframe').src = '';
         }
 
         function abrirModalEnviar(solicitudId) {
@@ -543,6 +644,104 @@ checkRole('presidencia');
         function cerrarModal() {
             document.getElementById('modal-enviar').classList.add('hidden');
             document.getElementById('form-enviar-solicitud').reset();
+        }
+
+        // Funciones para manejar documentos
+        function generarBotonesDocumentos(solicitud) {
+            const documentos = [
+                { campo: 'ine', etiqueta: 'INE', color: 'text-blue-600 hover:text-blue-900' },
+                { campo: 'curp', etiqueta: 'CURP', color: 'text-green-600 hover:text-green-900' },
+                { campo: 'comprobante_domicilio', etiqueta: 'Domicilio', color: 'text-purple-600 hover:text-purple-900' },
+                { campo: 'documento_adicional', etiqueta: 'Doc+', color: 'text-orange-600 hover:text-orange-900' },
+                { campo: 'imagen_adicional', etiqueta: 'Img+', color: 'text-pink-600 hover:text-pink-900' }
+            ];
+            
+            let botones = [];
+            
+            documentos.forEach(doc => {
+                if (solicitud[doc.campo] && solicitud[doc.campo] !== '') {
+                    botones.push(`
+                        <button 
+                            onclick="verDocumento(${solicitud.id}, '${doc.campo}')" 
+                            class="doc-button ${doc.color}"
+                            title="Ver ${doc.etiqueta}"
+                        >
+                            ${doc.etiqueta}
+                        </button>
+                    `);
+                }
+            });
+            
+            return botones.length > 0 ? botones.join('') : '<span class="text-gray-400 text-xs">Sin docs</span>';
+        }
+
+        function verDocumento(solicitudId, tipoDocumento) {
+            const url = `../../backend/presidencia/ver_documento.php?solicitud_id=${solicitudId}&tipo=${tipoDocumento}`;
+            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+        }
+
+        function verDocumentoModal(solicitudId, tipoDocumento) {
+            const url = `../../backend/presidencia/ver_documento.php?solicitud_id=${solicitudId}&tipo=${tipoDocumento}`;
+            document.getElementById('pdf-iframe').src = url;
+            document.getElementById('modal-pdf').classList.remove('hidden');
+        }
+
+        // Función para documentos en solicitudes enviadas
+        function generarBotonesDocumentosEnviadas(solicitud) {
+            const documentos = [
+                { campo: 'ine', etiqueta: 'INE', color: 'text-blue-600 hover:text-blue-900' },
+                { campo: 'curp', etiqueta: 'CURP', color: 'text-green-600 hover:text-green-900' },
+                { campo: 'comprobante_domicilio', etiqueta: 'Domicilio', color: 'text-purple-600 hover:text-purple-900' },
+                { campo: 'documento_adicional', etiqueta: 'Doc+', color: 'text-orange-600 hover:text-orange-900' },
+                { campo: 'imagen_adicional', etiqueta: 'Img+', color: 'text-pink-600 hover:text-pink-900' }
+            ];
+            
+            let botones = [];
+            
+            documentos.forEach(doc => {
+                if (solicitud[doc.campo] && solicitud[doc.campo] !== '') {
+                    botones.push(`
+                        <button 
+                            onclick="verDocumento(${solicitud.solicitud_id}, '${doc.campo}')" 
+                            class="doc-button ${doc.color}"
+                            title="Ver ${doc.etiqueta}"
+                        >
+                            ${doc.etiqueta}
+                        </button>
+                    `);
+                }
+            });
+            
+            return botones.length > 0 ? botones.join('') : '<span class="text-gray-400 text-xs">Sin docs</span>';
+        }
+
+        // Función para documentos en solicitudes autorizadas
+        function generarBotonesDocumentosAutorizadas(solicitud) {
+            const documentos = [
+                { campo: 'ine', etiqueta: 'INE', color: 'text-blue-600 hover:text-blue-900' },
+                { campo: 'curp', etiqueta: 'CURP', color: 'text-green-600 hover:text-green-900' },
+                { campo: 'comprobante_domicilio', etiqueta: 'Domicilio', color: 'text-purple-600 hover:text-purple-900' },
+                { campo: 'documento_adicional', etiqueta: 'Doc+', color: 'text-orange-600 hover:text-orange-900' },
+                { campo: 'imagen_adicional', etiqueta: 'Img+', color: 'text-pink-600 hover:text-pink-900' }
+            ];
+            
+            let botones = [];
+            
+            documentos.forEach(doc => {
+                if (solicitud[doc.campo] && solicitud[doc.campo] !== '') {
+                    botones.push(`
+                        <button 
+                            onclick="verDocumento(${solicitud.solicitud_id}, '${doc.campo}')" 
+                            class="doc-button ${doc.color}"
+                            title="Ver ${doc.etiqueta}"
+                        >
+                            ${doc.etiqueta}
+                        </button>
+                    `);
+                }
+            });
+            
+            return botones.length > 0 ? botones.join('') : '<span class="text-gray-400 text-xs">Sin docs</span>';
         }
 
         // Enviar solicitud a departamento
@@ -603,10 +802,80 @@ checkRole('presidencia');
             }
         });
 
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('modal-pdf').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalPDF();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modalPDF = document.getElementById('modal-pdf');
+                if (!modalPDF.classList.contains('hidden')) {
+                    cerrarModalPDF();
+                }
+            }
+        });
+
         // Al cargar la página, mostrar el overview por defecto
         document.addEventListener('DOMContentLoaded', function() {
             const overview = document.getElementById('dashboard-overview');
             overview.style.display = 'block';
+        });
+
+        // Funciones para cambio de contraseña
+        function mostrarCambioContrasenaPresidencia() {
+            document.getElementById('modal-cambio-contrasena-presidencia').classList.remove('hidden');
+        }
+
+        function cerrarModalContrasenaPresidencia() {
+            document.getElementById('modal-cambio-contrasena-presidencia').classList.add('hidden');
+            document.getElementById('form-cambio-contrasena-presidencia').reset();
+        }
+
+        // Manejar el envío del formulario de cambio de contraseña
+        document.getElementById('form-cambio-contrasena-presidencia').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('../../backend/cambiar_contrasena.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    cerrarModalContrasenaPresidencia();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error al cambiar contraseña:', error);
+                alert('❌ Error al cambiar la contraseña. Inténtelo de nuevo.');
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('modal-cambio-contrasena-presidencia').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalContrasenaPresidencia();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('modal-cambio-contrasena-presidencia');
+                if (!modal.classList.contains('hidden')) {
+                    cerrarModalContrasenaPresidencia();
+                }
+            }
         });
     </script>
 </body>

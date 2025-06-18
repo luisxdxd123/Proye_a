@@ -3,7 +3,7 @@ require_once '../../backend/auth.php';
 
 // Verificar que el usuario tiene un rol válido (ciudadano, presidencia o departamentos)
 $roles_permitidos = ['ciudadano', 'presidencia', 'departamentos'];
-if (!isset($_SESSION['rol_user']) || !in_array($_SESSION['rol_user'], $roles_permitidos)) {
+if (!isset($_SESSION['rol']) || !in_array($_SESSION['rol'], $roles_permitidos)) {
     header('Location: ../log_reg.php');
     exit();
 }
@@ -18,7 +18,7 @@ require_once(__DIR__ . '/../../backend/config/db_config.php');
 // Obtener información de la solicitud
 try {
     $solicitudId = $_GET['id'];
-    $userRole = $_SESSION['rol_user'];
+    $userRole = $_SESSION['rol'];
     
     // Consulta base para obtener la solicitud
     $query = "SELECT 
@@ -136,6 +136,11 @@ try {
         <div class="title">SOLICITUD DE SERVICIO</div>
         <div>Folio: #<?php echo str_pad($solicitud['id'], 6, '0', STR_PAD_LEFT); ?></div>
         <div>Fecha: <?php echo date('d/m/Y', strtotime($solicitud['fecha_creacion'])); ?></div>
+        <?php if ($userRole !== 'ciudadano'): ?>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">
+            Visualizado desde: <?php echo ucfirst($userRole); ?>
+        </div>
+        <?php endif; ?>
     </div>
 
     <div class="section">
@@ -215,9 +220,19 @@ try {
         <button onclick="window.print();" style="background-color: #6B1024; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             Imprimir / Guardar como PDF
         </button>
+        <?php if ($userRole === 'presidencia'): ?>
+        <button onclick="window.location.href='../presidencia/dash_pre.php';" style="background-color: #4A90E2; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            Regresar a Dashboard
+        </button>
+        <?php elseif ($userRole === 'departamentos'): ?>
+        <button onclick="window.location.href='../departamentos/dash_dep.php';" style="background-color: #4A90E2; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            Regresar a Dashboard
+        </button>
+        <?php else: ?>
         <button onclick="window.close();" style="background-color: #666; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
             Cerrar
         </button>
+        <?php endif; ?>
     </div>
 
     <script>
