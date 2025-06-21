@@ -18,14 +18,14 @@ checkRole('departamentos');
                 <h2 class="text-2xl font-semibold">Panel Departamento</h2>
             </div>
             <nav class="mt-6">
-                <div class="px-4 py-3">
+                <a href="#" id="inicio-tab" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
                     <div class="flex items-center space-x-3">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                         <span>Inicio</span>
                     </div>
-                </div>
+                </a>
                 <a href="#" id="recibidas-tab" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
                     <div class="flex items-center space-x-3">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ checkRole('departamentos');
                         <span>Solicitudes Autorizadas</span>
                     </div>
                 </a>
-                <a href="#" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
+                <a href="#" id="perfil-tab" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
                     <div class="flex items-center space-x-3">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -153,6 +153,136 @@ checkRole('departamentos');
                         </div>
                     </div>
                 </div>
+
+                <!-- Mi Perfil Section -->
+                <div id="perfil-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-[#6B1024] mb-6">Mi Perfil</h2>
+                    
+                    <!-- Información Personal -->
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Información Personal</h3>
+                            <button id="btn-editar-perfil" class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A] transition-colors">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                Editar
+                            </button>
+                        </div>
+                        
+                        <form id="form-perfil-departamento" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                                <input type="text" id="perfil-nombre" name="nombre" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]" disabled>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
+                                <input type="text" id="perfil-apellido" name="apellido" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]" disabled>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="perfil-email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]" disabled>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                                <input type="tel" id="perfil-telefono" name="telefono" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]" disabled>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+                                <input type="text" id="perfil-departamento" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" disabled readonly>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Registro</label>
+                                <input type="text" id="perfil-fecha-registro" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" disabled readonly>
+                            </div>
+                            
+                            <div id="botones-perfil" class="md:col-span-2 hidden">
+                                <div class="flex space-x-3">
+                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Guardar Cambios
+                                    </button>
+                                    <button type="button" id="btn-cancelar-perfil" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Estadísticas del Departamento -->
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Estadísticas del Departamento</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="font-medium text-blue-900 mb-1">Solicitudes Recibidas</h4>
+                                <p id="stat-perfil-recibidas" class="text-2xl font-bold text-blue-600">0</p>
+                                <p class="text-xs text-blue-600">Total histórico</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h4 class="font-medium text-yellow-900 mb-1">En Proceso</h4>
+                                <p id="stat-perfil-proceso" class="text-2xl font-bold text-yellow-600">0</p>
+                                <p class="text-xs text-yellow-600">Actualmente</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <h4 class="font-medium text-green-900 mb-1">Autorizadas</h4>
+                                <p id="stat-perfil-autorizadas" class="text-2xl font-bold text-green-600">0</p>
+                                <p class="text-xs text-green-600">Total completadas</p>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                                <h4 class="font-medium text-red-900 mb-1">Rechazadas</h4>
+                                <p id="stat-perfil-rechazadas" class="text-2xl font-bold text-red-600">0</p>
+                                <p class="text-xs text-red-600">Total rechazadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones Rápidas -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="mostrarCambioContrasena()" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <svg class="w-8 h-8 text-[#6B1024] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                <div class="text-left">
+                                    <h4 class="font-medium text-gray-900">Cambiar Contraseña</h4>
+                                    <p class="text-sm text-gray-600">Actualizar credenciales de acceso</p>
+                                </div>
+                            </button>
+                            
+                            <button onclick="exportarDatos()" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <svg class="w-8 h-8 text-[#6B1024] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <div class="text-left">
+                                    <h4 class="font-medium text-gray-900">Exportar Datos</h4>
+                                    <p class="text-sm text-gray-600">Descargar reporte de actividad</p>
+                                </div>
+                            </button>
+                            
+                            <button onclick="verPoliticas()" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <svg class="w-8 h-8 text-[#6B1024] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <div class="text-left">
+                                    <h4 class="font-medium text-gray-900">Políticas y Normas</h4>
+                                    <p class="text-sm text-gray-600">Consultar documentación</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Dashboard Overview (Default View) -->
@@ -244,6 +374,39 @@ checkRole('departamentos');
       </div>
           </div>
 
+    <!-- Modal para cambiar contraseña -->
+    <div id="modal-cambio-contrasena-departamento" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-[#6B1024]">Cambiar Contraseña</h3>
+                <button onclick="cerrarModalContrasenaDepartamento()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="form-cambio-contrasena-departamento">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña Actual:</label>
+                    <input type="password" name="contrasena_actual" required class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña:</label>
+                    <input type="password" name="contrasena_nueva" required minlength="6" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña:</label>
+                    <input type="password" name="confirmar_contrasena" required minlength="6" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#6B1024] focus:border-[#6B1024]">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="cerrarModalContrasenaDepartamento()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-[#6B1024] text-white rounded-md hover:bg-[#8B223A]">Cambiar Contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Función para mostrar/ocultar secciones
         function showSection(sectionId) {
@@ -251,19 +414,28 @@ checkRole('departamentos');
             sections.forEach(section => section.classList.add('hidden'));
             
             const overview = document.getElementById('dashboard-overview');
-            overview.style.display = 'none';
             
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
+            if (sectionId === 'dashboard-overview') {
+                // Mostrar vista principal
+                overview.style.display = 'block';
+            } else {
+                // Ocultar vista principal
+                overview.style.display = 'none';
                 
-                // Cargar datos según la sección
-                if (sectionId === 'recibidas-content') {
-                    cargarSolicitudesRecibidas();
-                } else if (sectionId === 'administrar-content') {
-                    cargarSolicitudesEnProceso();
-                } else if (sectionId === 'autorizadas-content') {
-                    cargarSolicitudesAutorizadas();
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    
+                    // Cargar datos según la sección
+                    if (sectionId === 'recibidas-content') {
+                        cargarSolicitudesRecibidas();
+                    } else if (sectionId === 'administrar-content') {
+                        cargarSolicitudesEnProceso();
+                    } else if (sectionId === 'autorizadas-content') {
+                        cargarSolicitudesAutorizadas();
+                    } else if (sectionId === 'perfil-content') {
+                        cargarPerfilDepartamento();
+                    }
                 }
             }
             
@@ -273,7 +445,15 @@ checkRole('departamentos');
                 tab.classList.remove('bg-[#8B223A]');
             });
             
-            const activeTab = document.getElementById(sectionId.replace('-content', '-tab'));
+            // Destacar pestaña activa
+            let activeTabId;
+            if (sectionId === 'dashboard-overview') {
+                activeTabId = 'inicio-tab';
+            } else {
+                activeTabId = sectionId.replace('-content', '-tab');
+            }
+            
+            const activeTab = document.getElementById(activeTabId);
             if (activeTab) {
                 activeTab.classList.add('bg-[#8B223A]');
             }
@@ -446,7 +626,117 @@ checkRole('departamentos');
             }
         });
 
+        // Cargar perfil del departamento
+        async function cargarPerfilDepartamento() {
+            try {
+                // Cargar información del usuario actual desde la sesión PHP
+                const perfilData = {
+                    nombre: '<?php echo htmlspecialchars($_SESSION['nombre']); ?>',
+                    apellido: '<?php echo htmlspecialchars($_SESSION['apellido'] ?? ''); ?>',
+                    email: '<?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?>',
+                    telefono: '<?php echo htmlspecialchars($_SESSION['telefono'] ?? ''); ?>',
+                    fecha_registro: '<?php echo htmlspecialchars($_SESSION['fecha_creacion'] ?? ''); ?>',
+                    departamento: 'Departamento de <?php echo htmlspecialchars($_SESSION['nombre']); ?>'
+                };
+                
+                // Llenar formulario con datos
+                document.getElementById('perfil-nombre').value = perfilData.nombre;
+                document.getElementById('perfil-apellido').value = perfilData.apellido;
+                document.getElementById('perfil-email').value = perfilData.email;
+                document.getElementById('perfil-telefono').value = perfilData.telefono;
+                document.getElementById('perfil-departamento').value = perfilData.departamento;
+                
+                // Formatear fecha
+                if (perfilData.fecha_registro) {
+                    const fecha = new Date(perfilData.fecha_registro);
+                    document.getElementById('perfil-fecha-registro').value = fecha.toLocaleDateString('es-ES');
+                }
+                
+                // Cargar estadísticas del departamento
+                await cargarEstadisticasPerfil();
+                
+            } catch (error) {
+                console.error('Error al cargar perfil:', error);
+            }
+        }
+
+        // Cargar estadísticas para el perfil
+        async function cargarEstadisticasPerfil() {
+            try {
+                const [recibidas, proceso, autorizadas] = await Promise.all([
+                    fetch('../../backend/departamentos/obtener_solicitudes_recibidas.php').then(r => r.json()),
+                    fetch('../../backend/departamentos/obtener_solicitudes_en_proceso.php').then(r => r.json()),
+                    fetch('../../backend/departamentos/obtener_solicitudes_autorizadas.php').then(r => r.json())
+                ]);
+                
+                // Actualizar estadísticas en el perfil
+                document.getElementById('stat-perfil-recibidas').textContent = 
+                    (recibidas.success ? recibidas.solicitudes.length : 0) + 
+                    (proceso.success ? proceso.solicitudes.length : 0) + 
+                    (autorizadas.success ? autorizadas.solicitudes.length : 0);
+                
+                document.getElementById('stat-perfil-proceso').textContent = 
+                    proceso.success ? proceso.solicitudes.length : 0;
+                
+                document.getElementById('stat-perfil-autorizadas').textContent = 
+                    autorizadas.success ? autorizadas.solicitudes.length : 0;
+                
+                // Calcular rechazadas (simulado, ya que no tenemos endpoint específico)
+                document.getElementById('stat-perfil-rechazadas').textContent = '0';
+                
+            } catch (error) {
+                console.error('Error al cargar estadísticas del perfil:', error);
+            }
+        }
+
+        // Funciones para editar perfil
+        function habilitarEdicionPerfil() {
+            const campos = ['perfil-nombre', 'perfil-apellido', 'perfil-email', 'perfil-telefono'];
+            campos.forEach(id => {
+                document.getElementById(id).disabled = false;
+            });
+            
+            document.getElementById('btn-editar-perfil').style.display = 'none';
+            document.getElementById('botones-perfil').classList.remove('hidden');
+        }
+
+        function cancelarEdicionPerfil() {
+            const campos = ['perfil-nombre', 'perfil-apellido', 'perfil-email', 'perfil-telefono'];
+            campos.forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+            
+            document.getElementById('btn-editar-perfil').style.display = 'block';
+            document.getElementById('botones-perfil').classList.add('hidden');
+            
+            // Recargar datos originales
+            cargarPerfilDepartamento();
+        }
+
+        // Funciones para acciones rápidas
+        function mostrarCambioContrasena() {
+            document.getElementById('modal-cambio-contrasena-departamento').classList.remove('hidden');
+        }
+
+        function cerrarModalContrasenaDepartamento() {
+            document.getElementById('modal-cambio-contrasena-departamento').classList.add('hidden');
+            document.getElementById('form-cambio-contrasena-departamento').reset();
+        }
+
+        function exportarDatos() {
+            alert('📊 Funcionalidad de exportación en desarrollo.\n\nPróximamente podrás descargar:\n• Reporte de solicitudes procesadas\n• Estadísticas de rendimiento\n• Historial de actividades');
+        }
+
+        function verPoliticas() {
+            alert('📋 Políticas y Normas Departamentales\n\n• Manual de procedimientos\n• Políticas de privacidad\n• Normas de calidad\n• Código de conducta\n\n(Documentación en desarrollo)');
+        }
+
         // Event listeners para los tabs de la sidebar
+        document.getElementById('inicio-tab').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('dashboard-overview');
+        });
+
         document.getElementById('recibidas-tab').addEventListener('click', (e) => {
             e.preventDefault();
             showSection('recibidas-content');
@@ -462,10 +752,87 @@ checkRole('departamentos');
             showSection('autorizadas-content');
         });
 
+        document.getElementById('perfil-tab').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('perfil-content');
+        });
+
+        // Event listeners para el perfil
+        document.getElementById('btn-editar-perfil').addEventListener('click', habilitarEdicionPerfil);
+        document.getElementById('btn-cancelar-perfil').addEventListener('click', cancelarEdicionPerfil);
+
+        // Formulario de perfil
+        document.getElementById('form-perfil-departamento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('../../backend/actualizar_perfil.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Perfil actualizado correctamente');
+                    cancelarEdicionPerfil();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error al actualizar perfil:', error);
+                alert('❌ Error al actualizar el perfil');
+            }
+        });
+
+        // Formulario de cambio de contraseña
+        document.getElementById('form-cambio-contrasena-departamento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('../../backend/cambiar_contrasena.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    cerrarModalContrasenaDepartamento();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error al cambiar contraseña:', error);
+                alert('❌ Error al cambiar la contraseña. Inténtelo de nuevo.');
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('modal-cambio-contrasena-departamento').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalContrasenaDepartamento();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('modal-cambio-contrasena-departamento');
+                if (!modal.classList.contains('hidden')) {
+                    cerrarModalContrasenaDepartamento();
+                }
+            }
+        });
+
         // Al cargar la página, mostrar el overview y cargar estadísticas
         document.addEventListener('DOMContentLoaded', function() {
-            const overview = document.getElementById('dashboard-overview');
-            overview.style.display = 'block';
+            showSection('dashboard-overview');
             
             // Cargar estadísticas iniciales
             cargarSolicitudesRecibidas();

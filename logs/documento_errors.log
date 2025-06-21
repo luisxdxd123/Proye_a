@@ -1,0 +1,7 @@
+[2025-06-21 02:19:43] DEBUG - Solicitud: 4, Tipo: ine, Archivo: 1750214632_ine_Audit and monitoring practice part 1.pdf, Ruta: C:\xampp\htdocs\Proye_a\backend\presidencia/../../uploads/documentos/1750214632_ine_Audit and monitoring practice part 1.pdf
+[2025-06-21 02:19:43] SUCCESS - Documento servido correctamente - Solicitud: 4, Archivo: 1750214632_ine_Audit and monitoring practice part 1.pdf
+[2025-06-21 02:19:47] DEBUG - Solicitud: 5, Tipo: imagen_adicional, Archivo: imagen_6849dcee09b29.jpeg, Ruta: C:\xampp\htdocs\Proye_a\backend\presidencia/../../uploads/documentos/imagen_6849dcee09b29.jpeg
+[2025-06-21 02:19:47] Archivo no encontrado en el sistema - Solicitud: 5, Archivo: imagen_6849dcee09b29.jpeg, Ruta: C:\xampp\htdocs\Proye_a\backend\presidencia/../../uploads/documentos/imagen_6849dcee09b29.jpeg
+[2025-06-21 02:19:47] Archivos similares encontrados: 1748835179_comprobante_domicilio_ISOIEC 9075.pdf, 1748835179_curp_ISOIEC 9075.pdf, 1748835179_ine_Oracle 19C Backup 1.pdf, 1750214632_comprobante_domicilio_Audit and monitoring practice part 1.pdf, 1750214632_curp_Audit and monitoring practice part 1.pdf, 1750214632_ine_Audit and monitoring practice part 1.pdf
+[2025-06-21 02:19:56] DEBUG - Solicitud: 2, Tipo: curp, Archivo: 1748896994_curp_iphone.jpeg, Ruta: C:\xampp\htdocs\Proye_a\backend\presidencia/../../uploads/documentos/1748896994_curp_iphone.jpeg
+[2025-06-21 02:19:56] SUCCESS - Documento servido correctamente - Solicitud: 2, Archivo: 1748896994_curp_iphone.jpeg

@@ -456,6 +456,22 @@
         e.preventDefault();
         showSection('administradores');
       });
+      
+      // Event listener para gestión de contraseñas
+      const btnContrasenas = document.getElementById('btnContrasenas');
+      if (btnContrasenas) {
+        btnContrasenas.addEventListener('click', (e) => {
+          e.preventDefault();
+          mostrarGestionContrasenas();
+        });
+      }
+      
+      // Verificar si se debe abrir una sección específica desde la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const seccion = urlParams.get('seccion');
+      if (seccion === 'contrasenas') {
+        mostrarGestionContrasenas();
+      }
     });
 
     // Variables globales para gestión de contraseñas

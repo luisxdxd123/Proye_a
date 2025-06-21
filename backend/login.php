@@ -14,11 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($usuario) {
         $autenticado = false;
 
-        // Para admin y departamentos, comparar contraseña en texto plano
-        if ($usuario['rol_user'] === 'admin' || $usuario['rol_user'] === 'departamentos') {
+        // Para departamentos, comparar contraseña en texto plano
+        if ($usuario['rol_user'] === 'departamentos') {
             $autenticado = ($contrasena === $usuario['contrasena']);
         } 
-        // Para ciudadanos, usar verificación de hash
+        // Para ciudadanos, administradores y presidencia, usar verificación de hash
         else {
             $autenticado = password_verify($contrasena, $usuario['contrasena']);
         }

@@ -64,7 +64,7 @@ if ($current_page === 'ciudadanos.php') {
                 <span>Administradores</span>
             </div>
         </a>
-        <a href="#" onclick="mostrarGestionContrasenas()" id="btnContrasenas" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
+        <a href="dash_ad.php?seccion=contrasenas" onclick="return gestionContrasenas(event)" id="btnContrasenas" class="block px-4 py-3 hover:bg-[#8B223A] transition-colors duration-200">
             <div class="flex items-center space-x-3">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
@@ -79,3 +79,16 @@ if ($current_page === 'ciudadanos.php') {
         </a>
     </div>
 </div> 
+
+<script>
+function gestionContrasenas(event) {
+    // Si ya estamos en el dashboard principal, usar la función local
+    if (typeof mostrarGestionContrasenas === 'function') {
+        event.preventDefault();
+        mostrarGestionContrasenas();
+        return false;
+    }
+    // Si no, permitir que el enlace redirija normalmente
+    return true;
+}
+</script>

@@ -161,11 +161,15 @@ checkRole('presidencia');
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold mb-4">Solicitudes por Estado</h3>
-                            <canvas id="chart-estados" width="400" height="200"></canvas>
+                            <div class="relative h-64">
+                                <canvas id="chart-estados"></canvas>
+                            </div>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold mb-4">Solicitudes por Mes</h3>
-                            <canvas id="chart-meses" width="400" height="200"></canvas>
+                            <div class="relative h-64">
+                                <canvas id="chart-meses"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -355,32 +359,48 @@ checkRole('presidencia');
             sections.forEach(section => section.classList.add('hidden'));
             
             const overview = document.getElementById('dashboard-overview');
-            overview.style.display = 'none';
             
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
+            if (sectionId === 'dashboard-overview') {
+                // Mostrar vista principal
+                overview.style.display = 'block';
+            } else {
+                // Ocultar vista principal
+                overview.style.display = 'none';
                 
-                // Cargar datos según la sección
-                if (sectionId === 'solicitudes-content') {
-                    cargarSolicitudes();
-                } else if (sectionId === 'enviadas-content') {
-                    cargarDepartamentos();
-                    cargarSolicitudesEnviadas();
-                } else if (sectionId === 'autorizadas-content') {
-                    cargarSolicitudesAutorizadas();
-                } else if (sectionId === 'reportes-content') {
-                    cargarEstadisticas();
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    
+                    // Cargar datos según la sección
+                    if (sectionId === 'solicitudes-content') {
+                        cargarSolicitudes();
+                    } else if (sectionId === 'enviadas-content') {
+                        cargarDepartamentos();
+                        cargarSolicitudesEnviadas();
+                    } else if (sectionId === 'autorizadas-content') {
+                        cargarSolicitudesAutorizadas();
+                    } else if (sectionId === 'reportes-content') {
+                        cargarEstadisticas();
+                    }
                 }
             }
             
+            // Actualizar estado visual de las pestañas
             const allTabs = document.querySelectorAll('nav a');
             allTabs.forEach(tab => {
                 tab.classList.remove('bg-[#8B223A]', 'border-white');
                 tab.classList.add('border-transparent');
             });
             
-            const activeTab = document.getElementById(sectionId.replace('-content', '-tab'));
+            // Destacar pestaña activa
+            let activeTabId;
+            if (sectionId === 'dashboard-overview') {
+                activeTabId = 'inicio-tab';
+            } else {
+                activeTabId = sectionId.replace('-content', '-tab');
+            }
+            
+            const activeTab = document.getElementById(activeTabId);
             if (activeTab) {
                 activeTab.classList.add('bg-[#8B223A]', 'border-white');
                 activeTab.classList.remove('border-transparent');
@@ -552,12 +572,17 @@ checkRole('presidencia');
                             labels: stats.solicitudes_por_estado.map(e => e.estado),
                             datasets: [{
                                 data: stats.solicitudes_por_estado.map(e => e.cantidad),
-                                backgroundColor: ['#FCD34D', '#60A5FA', '#34D399', '#EF4444']
+                                backgroundColor: ['#FCD34D', '#60A5FA', '#34D399', '#EF4444', '#A78BFA']
                             }]
                         },
                         options: {
                             responsive: true,
-                            maintainAspectRatio: false
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
                         }
                     });
                     
@@ -576,12 +601,23 @@ checkRole('presidencia');
                                 data: stats.por_mes.map(m => m.cantidad),
                                 borderColor: '#6B1024',
                                 backgroundColor: 'rgba(107, 16, 36, 0.1)',
-                                tension: 0.4
+                                tension: 0.4,
+                                fill: true
                             }]
                         },
                         options: {
                             responsive: true,
-                            maintainAspectRatio: false
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
                         }
                     });
                     
@@ -677,13 +713,53 @@ checkRole('presidencia');
 
         function verDocumento(solicitudId, tipoDocumento) {
             const url = `../../backend/presidencia/ver_documento.php?solicitud_id=${solicitudId}&tipo=${tipoDocumento}`;
-            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            
+            // Abrir en nueva ventana con manejo de errores
+            const nuevaVentana = window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            
+            // Verificar si la ventana se abrió correctamente
+            if (!nuevaVentana) {
+                alert('⚠️ No se pudo abrir el documento. Por favor, verifica que no tienes bloqueador de ventanas emergentes activado.');
+                return;
+            }
+            
+            // Verificar después de un momento si la ventana se cerró (indicaría un error)
+            setTimeout(() => {
+                if (nuevaVentana.closed) {
+                    console.warn(`Documento ${tipoDocumento} para solicitud ${solicitudId} puede haber tenido problemas al cargar`);
+                }
+            }, 1000);
         }
 
         function verDocumentoModal(solicitudId, tipoDocumento) {
             const url = `../../backend/presidencia/ver_documento.php?solicitud_id=${solicitudId}&tipo=${tipoDocumento}`;
-            document.getElementById('pdf-iframe').src = url;
+            
+            // Mostrar loading
+            const iframe = document.getElementById('pdf-iframe');
+            iframe.src = 'data:text/html,<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial;">🔄 Cargando documento...</div>';
             document.getElementById('modal-pdf').classList.remove('hidden');
+            
+            // Cargar el documento real
+            iframe.onload = function() {
+                // Verificar si hay error en la carga
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (iframeDoc.body.innerText.includes('no encontrado') || 
+                        iframeDoc.body.innerText.includes('Error') ||
+                        iframeDoc.body.innerText.includes('404')) {
+                        iframe.src = 'data:text/html,<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;font-family:Arial;text-align:center;"><h3 style="color:red;">❌ Documento no disponible</h3><p>El archivo solicitado no se encuentra en el servidor.</p><p><small>Solicitud: ' + solicitudId + ' | Tipo: ' + tipoDocumento + '</small></p></div>';
+                    }
+                } catch (e) {
+                    // Error de acceso cross-origin, probablemente el documento se cargó bien
+                    console.log('Documento cargado (cross-origin)');
+                }
+            };
+            
+            iframe.onerror = function() {
+                iframe.src = 'data:text/html,<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;font-family:Arial;text-align:center;"><h3 style="color:red;">❌ Error al cargar</h3><p>No se pudo cargar el documento solicitado.</p><p><small>Solicitud: ' + solicitudId + ' | Tipo: ' + tipoDocumento + '</small></p></div>';
+            };
+            
+            iframe.src = url;
         }
 
         // Función para documentos en solicitudes enviadas
@@ -777,6 +853,11 @@ checkRole('presidencia');
         });
 
         // Event listeners para los tabs de la sidebar
+        document.getElementById('inicio-tab').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('dashboard-overview');
+        });
+
         document.getElementById('solicitudes-tab').addEventListener('click', (e) => {
             e.preventDefault();
             showSection('solicitudes-content');
@@ -792,14 +873,10 @@ checkRole('presidencia');
             showSection('autorizadas-content');
         });
 
-        // Agregar listener para reportes
-        document.querySelectorAll('nav a').forEach(link => {
-            if (link.textContent.trim() === 'Reportes') {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showSection('reportes-content');
-                });
-            }
+        // Event listener para reportes
+        document.getElementById('reportes-tab').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('reportes-content');
         });
 
         // Cerrar modal al hacer clic fuera de él
@@ -821,8 +898,7 @@ checkRole('presidencia');
 
         // Al cargar la página, mostrar el overview por defecto
         document.addEventListener('DOMContentLoaded', function() {
-            const overview = document.getElementById('dashboard-overview');
-            overview.style.display = 'block';
+            showSection('dashboard-overview');
         });
 
         // Funciones para cambio de contraseña
